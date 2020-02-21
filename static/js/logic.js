@@ -15,15 +15,45 @@ var map = L.map('map', {
     }
   ).addTo(map);
   
-  
-  // BetaNYC Failed us, use local backup
-  // var link = "http://data.beta.nyc//dataset/0ff93d2d-90ba-457c-9f7e-39e47bf2ac5f/resource/" +
-  // "35dd04fb-81b3-479b-a074-a27a37888ce7/download/d085e2f8d0b54d4590b1e7d1f35594c1pediacitiesnycneighborhoods.geojson";
-  
   var link = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson';
   
-  // Grabbing our GeoJSON data..
-  d3.json(link, function(data) {
-    // Creating a GeoJSON layer with the retrieved data
-    L.geoJson(data).addTo(map);
+    function colorChange(point){
+        var color = ""
+
+        if (point.properties.mag<1){
+            color = "Green";
+        }
+        else if (point.properties.mag<2){
+            color = "lime";
+        }
+        else if (point.properties.mag<3){
+            color = "yellow";
+        }
+        else if (point.properties.mag<4){
+            color = "orange";
+        }
+        else if (point.properties.mag<5){
+            color = "orangered";
+        }
+        else {
+            color = "red";
+        }
+        return color;
+    };
+
+
+  function circles(point){
+      L.circle([point.geometry.coordinates[1],point.geometry.coordinates[0]],{
+          fillOpacity:0.75,
+          color:"white",
+          fillColor: colorChange(point),
+          radius: point.properties.mag*30000
+      }).addTo(map)
+  }
+
+  d3.json(link, function(data){
+      L.geoJson(data,{
+          pointToLayer: circles
+      });
   });
+
