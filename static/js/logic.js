@@ -16,7 +16,24 @@ var map = L.map('map', {
   ).addTo(map);
   
   var link = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson';
-  
+  var legend = L.control({ position: 'bottomright' });
+
+  legend.onAdd = function (legend) {
+    var div = L.DomUtil.create('div', 'info legend');
+    var colors = ['Green','Lime','yellow','orange','orangered','red'];
+    var labels = ["0-1","1-2","2-3","3-4","4-5","5+"];
+    var legendInfo = '<div class="labels"></div>'; 
+    div.innerHTML = legendInfo;
+    colors.forEach(function(color, index) {
+        labels.push('<li style="background-color: ' + color + '">' + labels[index] + '</li>');
+    });
+    div.innerHTML += '<ul>' + labels.join('') + '</ul>';
+    return div;
+  };
+
+
+  legend.addTo(map);
+
     function colorChange(point){
         var color = ""
 
@@ -55,5 +72,5 @@ var map = L.map('map', {
       L.geoJson(data,{
           pointToLayer: circles
       });
-  });
+ });
 
